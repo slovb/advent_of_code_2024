@@ -1,0 +1,4 @@
+*.txt
+*.pyc
+.mypy_cache
+.vscode
