@@ -27,8 +27,11 @@ def main(filename):
 if __name__ == "__main__":
     import sys
 
+    filename = "input.txt"
+    # filename = "test.txt"
+
     if len(sys.argv) < 2:
-        print("{}\n".format(main("input.txt")))
+        print("{}\n".format(main(filename)))
     else:
         for f in sys.argv[1:]:
             print("{}:\n{}\n".format(f, main(f)))
