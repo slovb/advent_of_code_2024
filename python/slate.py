@@ -27,11 +27,21 @@ def main(filename):
 if __name__ == "__main__":
     import sys
 
-    filename = "input.txt"
-    # filename = "test.txt"
+    testcases = [
+        ("test.txt", None),
+    ]
 
     if len(sys.argv) < 2:
-        print("{}\n".format(main(filename)))
+        has_failed = False
+        for filename, value in testcases:
+            res = main(filename)
+            print("{}   {}\n".format(filename, str(res)))
+            if res != value:
+                print("Failed test")
+                has_failed = True
+        if not has_failed:
+            filename = "input.txt"
+            print("{}   {}\n".format(filename, main(filename)))
     else:
         for f in sys.argv[1:]:
             print("{}:\n{}\n".format(f, main(f)))
