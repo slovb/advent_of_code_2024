@@ -13,12 +13,11 @@ def read(filename):
         data = f.read().rstrip()
 
         input = []
-        data = re.sub(r"don't\(\).*?(do\(\)|$)", "\n", data)
-        print(data)
+        data = re.findall(r"(?:do\(\)|^)(.*?)(?:don't\(\)|$)", data, flags=re.DOTALL)
 
-        mults = re.findall(r"mul\((\d+),(\d+)\)", data)
-        for a, b in mults:
-            input.append((int(a), int(b)))
+        for part in data:
+            for match in re.finditer(r"mul\((\d+),(\d+)\)", part):
+                input.append((int(match.group(1)), int(match.group(2))))
         return input
 
 
