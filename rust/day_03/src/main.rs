@@ -2,8 +2,8 @@ use std::fs;
 use regex::Regex;
 
 fn sum_products(text:String) -> i32 {
-    let mut output = 0;
     let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+    let mut output = 0;
     let mut results: Vec<(i32, i32)> = vec![];
     for (_, [x, y]) in re.captures_iter(text.as_str()).map(|c| c.extract()) {
         results.push((x.parse::<i32>().unwrap(), y.parse::<i32>().unwrap()))
@@ -16,8 +16,8 @@ fn sum_products(text:String) -> i32 {
 }
 
 fn grab_active(text:String) -> Vec<String> {
-    let mut output: Vec<String> = Vec::new();
     let re = Regex::new(r"(?:do\(\)|^)(?s)(.*?)(?:don't\(\)|$)").unwrap();
+    let mut output: Vec<String> = Vec::new();
     for (_, [s]) in re.captures_iter(text.as_str()).map(|c| c.extract()) {
         output.push(s.to_owned());
     }
