@@ -13,7 +13,7 @@ def read(filename):
         data = f.read().rstrip()
 
         input = []
-        data = re.sub(r"don't\(\).*?do\(\)", "\n", data)
+        data = re.sub(r"don't\(\).*?(do\(\)|$)", "\n", data)
         print(data)
 
         mults = re.findall(r"mul\((\d+),(\d+)\)", data)
