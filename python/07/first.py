@@ -1,7 +1,30 @@
+import itertools
+
+
+def can_hit(target, nums):
+    n = len(nums) - 1
+    for ops in itertools.product([0, 1], repeat=n):
+        val = nums[0]
+        for i, op in enumerate(ops):
+            if op == 0:
+                val += nums[i + 1]
+            elif op == 1:
+                val *= nums[i + 1]
+            else:
+                raise Exception("oh no")
+            if val > target:
+                break
+        if val == target:
+            return True
+    return False
+
+
 def solve(input):
     out = 0
     for row in input:
-        print(row)
+        target, nums = row
+        if can_hit(target, nums):
+            out += target
     return out
 
 
@@ -10,13 +33,10 @@ def read(filename):
         rows = [row.rstrip() for row in f.readlines()]
         input = []
         for row in rows:
-            # row = row.split(",")
-            # row = map(str.strip, row)
-            # row = map(int, row)
-
-            input.append(row)
-            # input.append(int(row))
-            # input.append(list(row))
+            left, rest = row.split(": ")
+            rest = rest.split(" ")
+            rest = map(int, rest)
+            input.append((int(left), list(rest)))
         return input
 
 
@@ -28,7 +48,7 @@ if __name__ == "__main__":
     import sys
 
     testcases = [
-        ("test0.txt", None),
+        ("test0.txt", 3749),
     ]
 
     if len(sys.argv) < 2:
