@@ -4,77 +4,67 @@ import java.util.*;
 
 
 public class Day01 {
-    public static class Solver {
-        private final List<Integer> left = new ArrayList<>();
-        private final List<Integer> right = new ArrayList<>();
+    private final String pathName;
+    private final List<Integer> left = new ArrayList<>();
+    private final List<Integer> right = new ArrayList<>();
 
-        public Solver(String pathName) throws Exception {
-            this.read(pathName);
-        }
-
-
-        public int solveFirst() {
-            Collections.sort(left);
-            Collections.sort(right);
-
-            int output = 0;
-            for (int i = 0; i < left.size(); i++) {
-                output += Math.abs(left.get(i) - right.get(i));
-            }
-            return output;
-        }
-
-        public int solveSecond() {
-            HashMap<Integer, Integer> counts = new HashMap<>();
-            for (Integer i : right) {
-                counts.put(i, counts.getOrDefault(i, 0) + 1);
-            }
-            int output = 0;
-            for (Integer i : left) {
-                output += i * counts.getOrDefault(i, 0);
-            }
-            return output;
-        }
-
-        private void read(String pathName) throws Exception {
-            try {
-                File file = new File(pathName);
-                Scanner scanner = new Scanner(file);
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine().trim();
-                    String[] parts = line.split(" {3}");
-                    if (parts.length == 2) {
-                        this.left.add(Integer.valueOf(parts[0]));
-                        this.right.add(Integer.valueOf(parts[1]));
-                    } else {
-                        throw new Exception("Incorrect input parser");
-                    }
-                }
-                scanner.close();
-            } catch (FileNotFoundException e) {
-                throw new Exception("File not Found");
-            }
-        }
+    public Day01(String pathName) {
+        this.pathName = pathName;
     }
 
-    public static int solveFirst(String pathName) {
+    private Day01 read() {
         try {
-            return new Solver(pathName).solveFirst();
+            File file = new File(this.pathName);
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine().trim();
+                String[] parts = line.split(" {3}");
+                if (parts.length == 2) {
+                    this.left.add(Integer.valueOf(parts[0]));
+                    this.right.add(Integer.valueOf(parts[1]));
+                } else {
+                    throw new Error("Unexpected input format");
+                }
+            }
+            scanner.close();
         }
-        catch (Exception ignored) {
+        catch (FileNotFoundException ignored) {
+            throw new Error(String.format("File not found %s", this.pathName));
+        }
+        return this;
+    }
 
+    private int first() {
+        Collections.sort(left);
+        Collections.sort(right);
+
+        int output = 0;
+        for (int i = 0; i < left.size(); i++) {
+            output += Math.abs(left.get(i) - right.get(i));
         }
-        return -1;
+        return output;
+    }
+
+    private int second() {
+        HashMap<Integer, Integer> counts = new HashMap<>();
+        for (Integer i : right) {
+            counts.put(i, counts.getOrDefault(i, 0) + 1);
+        }
+        int output = 0;
+        for (Integer i : left) {
+            output += i * counts.getOrDefault(i, 0);
+        }
+        return output;
+    }
+
+    // TEST CODE BELOW
+
+    public static int solveFirst(String pathName) {
+        return new Day01(pathName).read().first();
     }
 
     public static int solveSecond(String pathName) {
-        try {
-            return new Solver(pathName).solveSecond();
-        }
-        catch (Exception ignored) {
-
-        }
-        return -1;
+        return new Day01(pathName).read().second();
     }
 
     public static void main(String[] args) {
