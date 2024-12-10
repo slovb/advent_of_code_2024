@@ -1,6 +1,8 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class Day02 {
@@ -12,23 +14,18 @@ public class Day02 {
     }
 
     private Day02 read() {
-        try {
-            File file = new File(this.pathName);
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
-                String[] parts = line.split(" ");
+        try (Stream<String> lines = Files.lines(Path.of(pathName))) {
+            lines.forEach(line -> {
+                String[] split = line.trim().split(" ");
+                int[] row = new int[split.length];
 
-                int[] row = new int[parts.length];
-                for (int i = 0; i < parts.length; i++) {
-                    row[i] = Integer.parseInt(parts[i]);
+                for (int i = 0; i < split.length; i++) {
+                    row[i] = Integer.parseInt(split[i]);
                 }
                 this.rows.add(row);
-            }
-            scanner.close();
-        }
-        catch (FileNotFoundException ignored) {
-            throw new Error(String.format("File not found %s", this.pathName));
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return this;
     }

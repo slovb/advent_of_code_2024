@@ -1,6 +1,7 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class Day01 {
@@ -13,23 +14,17 @@ public class Day01 {
     }
 
     private Day01 read() {
-        try {
-            File file = new File(this.pathName);
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
-                String[] parts = line.split(" {3}");
-                if (parts.length == 2) {
-                    this.left.add(Integer.valueOf(parts[0]));
-                    this.right.add(Integer.valueOf(parts[1]));
-                } else {
-                    throw new Error("Unexpected input format");
+        try (Stream<String> lines = Files.lines(Path.of(this.pathName))) {
+            lines.forEach(line -> {
+                String[] parts = line.trim().split(" {3}"); // three space separator
+                if (parts.length != 2) {
+                    throw new RuntimeException("Unexpected input format");
                 }
-            }
-            scanner.close();
-        }
-        catch (FileNotFoundException ignored) {
-            throw new Error(String.format("File not found %s", this.pathName));
+                this.left.add(Integer.valueOf(parts[0]));
+                this.right.add(Integer.valueOf(parts[1]));
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return this;
     }
@@ -38,23 +33,23 @@ public class Day01 {
         Collections.sort(left);
         Collections.sort(right);
 
-        int output = 0;
+        int sum = 0;
         for (int i = 0; i < left.size(); i++) {
-            output += Math.abs(left.get(i) - right.get(i));
+            sum += Math.abs(left.get(i) - right.get(i));
         }
-        return output;
+        return sum;
     }
 
     private int second() {
         HashMap<Integer, Integer> counts = new HashMap<>();
-        for (Integer i : right) {
-            counts.put(i, counts.getOrDefault(i, 0) + 1);
+        for (Integer value : right) {
+            counts.put(value, counts.getOrDefault(value, 0) + 1);
         }
-        int output = 0;
-        for (Integer i : left) {
-            output += i * counts.getOrDefault(i, 0);
+        int sum = 0;
+        for (Integer value : left) {
+            sum += value * counts.getOrDefault(value, 0);
         }
-        return output;
+        return sum;
     }
 
     // TEST CODE BELOW
