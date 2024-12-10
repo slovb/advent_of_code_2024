@@ -1,7 +1,10 @@
 import java.io.IOException;
-import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,15 +15,6 @@ public class Day03 {
 
     public Day03(String pathName) {
         this.pathName = pathName;
-    }
-
-    private Day03 read() {
-        try {
-            this.data = Files.readString(Path.of(this.pathName)).strip();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
     }
 
     private static int sum_products(String text) {
@@ -42,16 +36,6 @@ public class Day03 {
         }
         return list;
     }
-
-    private int first() {
-        return sum_products(this.data);
-    }
-
-    private int second() {
-        return grab_active(this.data).stream().mapToInt(Day03::sum_products).sum();
-    }
-
-    // TEST CODE BELOW
 
     public static int solveFirst(String pathName) {
         return new Day03(pathName).read().first();
@@ -89,5 +73,24 @@ public class Day03 {
             }
         }
         System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
+    }
+
+    // TEST CODE BELOW
+
+    private Day03 read() {
+        try {
+            this.data = Files.readString(Path.of(this.pathName)).strip();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    private int first() {
+        return sum_products(this.data);
+    }
+
+    private int second() {
+        return grab_active(this.data).stream().mapToInt(Day03::sum_products).sum();
     }
 }

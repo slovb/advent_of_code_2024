@@ -1,7 +1,10 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 
@@ -11,23 +14,6 @@ public class Day02 {
 
     public Day02(String pathName) {
         this.pathName = pathName;
-    }
-
-    private Day02 read() {
-        try (Stream<String> lines = Files.lines(Path.of(pathName))) {
-            lines.forEach(line -> {
-                String[] split = line.trim().split(" ");
-                int[] row = new int[split.length];
-
-                for (int i = 0; i < split.length; i++) {
-                    row[i] = Integer.parseInt(split[i]);
-                }
-                this.rows.add(row);
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
     }
 
     private static boolean is_safe(int[] row, int skip) {
@@ -53,40 +39,11 @@ public class Day02 {
         }
         return true;
     }
+
     private static boolean is_safe(int[] row) {
         // -1 won't be an index so this is without skip, but a bit messy
-        return is_safe(row, - 1);
+        return is_safe(row, -1);
     }
-
-    private int first() {
-        int output = 0;
-        for (int[] row : this.rows) {
-            if (is_safe(row)) {
-                output += 1;
-            }
-        }
-        return output;
-    }
-
-    private int second() {
-        int output = 0;
-        for (int[] row : this.rows) {
-            if (is_safe(row)) {
-                output += 1;
-            }
-            else {
-                for (int i = 0; i < row.length; i++) {
-                    if (is_safe(row, i)) {
-                        output += 1;
-                        break;
-                    }
-                }
-            }
-        }
-        return output;
-    }
-
-    // TEST CODE BELOW
 
     public static int solveFirst(String pathName) {
         return new Day02(pathName).read().first();
@@ -124,5 +81,51 @@ public class Day02 {
             }
         }
         System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
+    }
+
+    // TEST CODE BELOW
+
+    private Day02 read() {
+        try (Stream<String> lines = Files.lines(Path.of(pathName))) {
+            lines.forEach(line -> {
+                String[] split = line.trim().split(" ");
+                int[] row = new int[split.length];
+
+                for (int i = 0; i < split.length; i++) {
+                    row[i] = Integer.parseInt(split[i]);
+                }
+                this.rows.add(row);
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    private int first() {
+        int output = 0;
+        for (int[] row : this.rows) {
+            if (is_safe(row)) {
+                output += 1;
+            }
+        }
+        return output;
+    }
+
+    private int second() {
+        int output = 0;
+        for (int[] row : this.rows) {
+            if (is_safe(row)) {
+                output += 1;
+            } else {
+                for (int i = 0; i < row.length; i++) {
+                    if (is_safe(row, i)) {
+                        output += 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return output;
     }
 }
