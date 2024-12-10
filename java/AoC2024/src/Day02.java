@@ -83,8 +83,6 @@ public class Day02 {
         System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
     }
 
-    // TEST CODE BELOW
-
     private Day02 read() {
         try (Stream<String> lines = Files.lines(Path.of(pathName))) {
             lines.forEach(line -> {

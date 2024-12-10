@@ -75,8 +75,6 @@ public class Day03 {
         System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
     }
 
-    // TEST CODE BELOW
-
     private Day03 read() {
         try {
             this.data = Files.readString(Path.of(this.pathName)).strip();
