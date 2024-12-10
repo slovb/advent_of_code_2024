@@ -2,19 +2,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Day03 {
-    private final String pathName;
+public class Day03 implements Solver<Integer> {
     private String data;
 
-    public Day03(String pathName) {
-        this.pathName = pathName;
+    public Day03() {
     }
 
     private static int sum_products(String text) {
@@ -37,58 +33,30 @@ public class Day03 {
         return list;
     }
 
-    public static int solveFirst(String pathName) {
-        return new Day03(pathName).read().first();
-    }
-
-    public static int solveSecond(String pathName) {
-        return new Day03(pathName).read().second();
-    }
-
     public static void main(String[] args) {
-        Map<String, Integer> test_first = new HashMap<>();
-        Map<String, Integer> test_second = new HashMap<>();
-
-        String folder = "day_03";
-        String mainPathName = String.format("data/%s/input.txt", folder);
-        test_first.put(String.format("data/%s/test_0.txt", folder), 161);
-        test_second.put(String.format("data/%s/test_1.txt", folder), 48);
-
-        for (Map.Entry<String, Integer> entry : test_first.entrySet()) {
-            int solution = solveFirst(entry.getKey());
-            System.out.printf("First %s: %s\n", entry.getKey(), solution);
-            if (solution != entry.getValue()) {
-                System.out.println("Failed test");
-                return;
-            }
-        }
-        System.out.printf("First %s: %s\n\n", mainPathName, solveFirst(mainPathName));
-
-        for (Map.Entry<String, Integer> entry : test_second.entrySet()) {
-            int solution = solveSecond(entry.getKey());
-            System.out.printf("Second %s: %s\n", entry.getKey(), solution);
-            if (solution != entry.getValue()) {
-                System.out.println("Failed test");
-                return;
-            }
-        }
-        System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
+        String folder = String.format("data/%s", Day03.class.getSimpleName());
+        new Runner<>(Day03::read, folder).addFirstTest(
+                "test_0.txt", 161
+        ).addSecondTest(
+                "test_1.txt", 48
+        ).run();
     }
 
-    private Day03 read() {
+    private static Day03 read(String pathName) {
+        Day03 solver = new Day03();
         try {
-            this.data = Files.readString(Path.of(this.pathName)).strip();
+            solver.data = Files.readString(Path.of(pathName)).strip();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return this;
+        return solver;
     }
 
-    private int first() {
+    public Integer first() {
         return sum_products(this.data);
     }
 
-    private int second() {
+    public Integer second() {
         return grab_active(this.data).stream().mapToInt(Day03::sum_products).sum();
     }
 }

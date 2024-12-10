@@ -2,18 +2,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 
-public class Day02 {
-    private final String pathName;
+public class Day02 implements Solver<Integer> {
     private final List<int[]> rows = new ArrayList<>();
 
-    public Day02(String pathName) {
-        this.pathName = pathName;
+    public Day02() {
     }
 
     private static boolean is_safe(int[] row, int skip) {
@@ -45,45 +41,18 @@ public class Day02 {
         return is_safe(row, -1);
     }
 
-    public static int solveFirst(String pathName) {
-        return new Day02(pathName).read().first();
-    }
-
-    public static int solveSecond(String pathName) {
-        return new Day02(pathName).read().second();
-    }
-
     public static void main(String[] args) {
-        Map<String, Integer> test_first = new HashMap<>();
-        Map<String, Integer> test_second = new HashMap<>();
+        String folder = String.format("data/%s", Day02.class.getSimpleName());
+        new Runner<>(Day02::read, folder).addFirstTest(
+                "test_0.txt", 2
 
-        String folder = "day_02";
-        String mainPathName = String.format("data/%s/input.txt", folder);
-        test_first.put(String.format("data/%s/test_0.txt", folder), 2);
-        test_second.put(String.format("data/%s/test_0.txt", folder), 4);
-
-        for (Map.Entry<String, Integer> entry : test_first.entrySet()) {
-            int solution = solveFirst(entry.getKey());
-            System.out.printf("First %s: %s\n", entry.getKey(), solution);
-            if (solution != entry.getValue()) {
-                System.out.println("Failed test");
-                return;
-            }
-        }
-        System.out.printf("First %s: %s\n\n", mainPathName, solveFirst(mainPathName));
-
-        for (Map.Entry<String, Integer> entry : test_second.entrySet()) {
-            int solution = solveSecond(entry.getKey());
-            System.out.printf("Second %s: %s\n", entry.getKey(), solution);
-            if (solution != entry.getValue()) {
-                System.out.println("Failed test");
-                return;
-            }
-        }
-        System.out.printf("Second %s: %s\n", mainPathName, solveSecond(mainPathName));
+        ).addSecondTest(
+                "test_0.txt", 4
+        ).run();
     }
 
-    private Day02 read() {
+    private static Day02 read(String pathName) {
+        Day02 solver = new Day02();
         try (Stream<String> lines = Files.lines(Path.of(pathName))) {
             lines.forEach(line -> {
                 String[] split = line.trim().split(" ");
@@ -92,15 +61,15 @@ public class Day02 {
                 for (int i = 0; i < split.length; i++) {
                     row[i] = Integer.parseInt(split[i]);
                 }
-                this.rows.add(row);
+                solver.rows.add(row);
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return this;
+        return solver;
     }
 
-    private int first() {
+    public Integer first() {
         int output = 0;
         for (int[] row : this.rows) {
             if (is_safe(row)) {
@@ -110,7 +79,7 @@ public class Day02 {
         return output;
     }
 
-    private int second() {
+    public Integer second() {
         int output = 0;
         for (int[] row : this.rows) {
             if (is_safe(row)) {
