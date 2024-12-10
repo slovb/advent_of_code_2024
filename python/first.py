@@ -1,11 +1,19 @@
-def solve(input):
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Data:
+    input: list[str]
+
+
+def solve(data: Data) -> int:
     out = 0
-    for row in input:
+    for row in data.input:
         print(row)
     return out
 
 
-def read(filename):
+def read(filename) -> Data:
     with open(filename, "r") as f:
         rows = [row.rstrip() for row in f.readlines()]
         input = []
@@ -17,7 +25,8 @@ def read(filename):
             input.append(row)
             # input.append(int(row))
             # input.append(list(row))
-        return input
+        data = Data(input=input)
+        return data
 
 
 def main(filename):
@@ -28,7 +37,8 @@ if __name__ == "__main__":
     import sys
 
     testcases = [
-        ("test0.txt", None),
+        ("test0.txt", 2),
+        # ("test1.txt", 36),
     ]
 
     if len(sys.argv) < 2:
