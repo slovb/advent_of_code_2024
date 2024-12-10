@@ -18,7 +18,7 @@ where
     let mut prev = values.next().unwrap();
     for val in values {
         let diff = prev - val;
-        if diff.abs() == 0 || diff.abs() > 3 {
+        if diff == 0 || diff.abs() > 3 {
             return false;
         }
         if diff * last_diff < 0 {
