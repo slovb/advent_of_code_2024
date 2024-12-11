@@ -37,8 +37,8 @@ if __name__ == "__main__":
     import sys
 
     testcases = [
-        ("test0.txt", 2),
-        # ("test1.txt", 36),
+        ("test_0.txt", 2),
+        # ("test_1.txt", 36),
     ]
 
     if len(sys.argv) < 2:
