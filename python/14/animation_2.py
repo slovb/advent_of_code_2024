@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 
+from PIL import Image, ImageDraw, ImageFont
+
 
 @dataclass(frozen=True)
 class Vector:
     x: int
     y: int
 
-    def scale(self, factor: int):
-        return Vector(factor * self.x, factor * self.y)
+    def scale(self, factor: float):
+        return Vector(int(round(factor * self.x)), int(round(factor * self.y)))
 
     def add(self, other):
         return Vector(self.x + other.x, self.y + other.y)
@@ -27,10 +29,14 @@ def solve(data: Data, width, height) -> int:
     half_width = width // 2
     half_height = height // 2
 
-    n = 0
-    # best = 10**9
+    n = 6444.0
+    n_step = 0.01
+    # best = 10**18
     best = 0
-    while True:
+    images = []
+    memory = {}
+    while n <= 6446.0:
+        n += n_step
         q = [0, 0, 0, 0]
         positions = []
         for pos, vec in data.input:
@@ -41,18 +47,23 @@ def solve(data: Data, width, height) -> int:
             index = 0 if future.x < half_width else 1
             index += 0 if future.y < half_height else 2
             q[index] += 1
-        # metric = abs(q[0] - q[1]) + abs(q[2] - q[3])
         metric = max(q) - min(q)
-        # metric = q[0] * q[1] * q[2] * q[3]
+        images.append(display(positions, width, height, memory, n, n_step))
         if metric > best:
             best = metric
-            display(positions, width, height)
-            print(q)
             print(f"{n}: {metric}")
-            print(" ")
-        n += 1
-        if best == 0:
-            break
+
+    fps = 30
+    for _ in range(fps):
+        images.append(images[-1])
+    images[0].save(
+        "image/animation_2.gif",
+        save_all=True,
+        append_images=images[1:],
+        optimize=True,
+        duration=1000 // fps,
+        loop=0,
+    )
     return q[0] * q[1] * q[2] * q[3]
 
 
@@ -73,25 +84,50 @@ def read(filename) -> Data:
         return data
 
 
-def display(points: list[Vector], width: int, height: int):
-    counts: dict[tuple[int, int], int] = {}
+def display(
+    points: list[Vector],
+    width: int,
+    height: int,
+    memory: dict[tuple[int, int], float],
+    n: float,
+    n_step: float,
+):
+    pixel_size = 3
+    background_color = (0x0, 0x0, 0x0)
+    primary_color = (56, 255, 17)
+    # tail_color = (255, 255, 255)
+    tail_color = primary_color
+    tail_length = 6
+    image = Image.new(
+        "RGB", (width * pixel_size, height * pixel_size), background_color
+    )
+    draw = ImageDraw.Draw(image)
     for point in points:
         pos = (point.x, point.y)
-        counts[pos] = counts.get(pos, 0) + 1
+        memory[pos] = n
     for y in range(height):
-        row = []
         for x in range(width):
             pos = (x, y)
-            if pos in counts:
-                n = counts[pos]
-                if n > 9:
-                    row.append("#")
-                else:
-                    row.append(str(n))
-            else:
-                row.append(".")
-        print("".join(row))
-    print(" ")
+            if pos in memory:
+                diff = (n - memory[pos]) / n_step
+                divisor = int(diff) + 1
+                if divisor < tail_length:
+                    if divisor > 1:
+                        color = (
+                            tail_color[0] // divisor,
+                            tail_color[1] // divisor,
+                            tail_color[2] // divisor,
+                        )
+                    else:
+                        color = primary_color
+                    draw.rectangle(
+                        [
+                            (pixel_size * x, pixel_size * y),
+                            (pixel_size * (x + 1), pixel_size * (y + 1)),
+                        ],
+                        fill=color,
+                    )
+    return image
 
 
 def main(filename, width=101, height=103):
