@@ -5,5 +5,4 @@ input.txt
 *.exe
 *.pdb
 target
-image
 *.ttf
