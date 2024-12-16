@@ -28,7 +28,6 @@ def display(walls, start, end, visited):
     for wall in walls:
         width = max(wall[0] + 1, width)
         height = max(wall[1] + 1, height)
-    rows = []
     for y in range(height):
         row = []
         for x in range(width):
@@ -43,8 +42,7 @@ def display(walls, start, end, visited):
                 row.append("#")
             else:
                 row.append(" ")
-        rows.append("".join(row))
-    return "\n".join(rows)
+        print("".join(row))
 
 
 def solve(data: Data) -> int:
@@ -77,30 +75,28 @@ def solve(data: Data) -> int:
         heapq.heappush(
             options, (score + 1, *step((x, y), dir), dir, past.union(set([(x, y)])))
         )
+        left = step((x, y), (dir - 1) % 4)
+        right = step((x, y), (dir + 1) % 4)
         heapq.heappush(
             options,
             (
-                score + 1000,
-                # *step((x, y), (dir + 1) % 4),
-                x,
-                y,
+                score + 1001,
+                *right,
                 (dir + 1) % 4,
-                past.union(set([(x, y)])),
+                past.union(set([(x, y), right])),
             ),
         )
         heapq.heappush(
             options,
             (
-                score + 1000,
-                # *step((x, y), (dir - 1) % 4),
-                x,
-                y,
+                score + 1001,
+                *left,
                 (dir - 1) % 4,
-                past.union(set([(x, y)])),
+                past.union(set([(x, y), left])),
             ),
         )
     seating = seating.union(set([data.end]))
-    print(display(data.walls, data.start, data.end, seating))
+    display(data.walls, data.start, data.end, seating)
     return len(seating)
 
 
