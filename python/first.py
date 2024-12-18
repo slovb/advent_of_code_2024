@@ -8,8 +8,7 @@ class Data:
 
 def solve(data: Data) -> int:
     out = 0
-    for row in data.input:
-        print(row)
+    print(data)
     return out
 
 

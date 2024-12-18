@@ -1,0 +1,40 @@
+A = a
+B = 0
+C = 0
+
+
+bst A,
+bxl 1,
+cdv B,
+bxl 5,
+bxc,
+out B,
+adv 3,
+jnz 0
+
+while A != 0:
+    B = (A % 8) ^ 1
+    C = A // (2 ** B)
+    B = B ^ 5
+    B = B ^ C
+    OUT B
+    A = A // 8
+
+
+
+Binary representation of A's that get further
+                       0b10110 1
+                     0b1001100 2
+                  0b1101001100 3
+             0b111100110110101 4
+       0b100000111100110110101 5
+      0b1011010110111010111101 6
+     0b11011010110111010111101 7
+ 0b101011011010110111010111101 8
+0b1001011011010110111010111101 9
+
+
+Octal representation of A's that get further
+  0o33267275 7
+ 0o533267275 8
+0o1133267275 9
