@@ -82,15 +82,6 @@ def step(pos: tuple[int, int], direction: int) -> tuple[int, int]:
     raise Exception("UNACCEPTABLE!!!")
 
 
-def collision(
-    path: list[tuple[int, int]], time: int, walls: dict[tuple[int, int], int]
-) -> bool:
-    for pos in path:
-        if pos in walls and walls[pos] < time:
-            return True
-    return False
-
-
 def solve(data: Data) -> tuple[int, int]:
     walls: dict[tuple[int, int], int] = {}
     for t, w in enumerate(data.walls):
@@ -104,7 +95,7 @@ def solve(data: Data) -> tuple[int, int]:
     time = 0
     while time < len(data.walls):
         if path is not None:
-            while not collision(path, time, walls):
+            while not data.walls[time - 1] in path:
                 time += 1
 
         paths: list[tuple[int, list[tuple[int, int]]]] = [
