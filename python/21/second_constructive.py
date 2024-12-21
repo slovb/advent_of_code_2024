@@ -38,13 +38,10 @@ def directional_coord(c: str) -> tuple[int, int]:
 
 
 def transform(
-    code: str,
-    coord: Callable[[str], tuple[int, int]],
-    illegal: tuple[int, int],
-) -> dict[str, int]:
-    memory: dict[str, int] = {}
+    code: str, coord: Callable[[str], tuple[int, int]], illegal: tuple[int, int]
+) -> str:
+    sections = []
     old_x, old_y = coord("A")
-    grouping = []
     for c in code:
         x, y = coord(c)
         dx, dy = x - old_x, y - old_y
@@ -67,34 +64,55 @@ def transform(
         if dx > 0 and not right_first:
             subsequence += [">" * abs(dx)]
         subsequence.append("A")
-        # sections.append("".join(subsequence))
+        sections.append("".join(subsequence))
 
         old_x, old_y = x, y
-        grouping += subsequence
-        if (x, y) == (0, 0):
-            # returning to home means we can jumble these
-            section = "".join(grouping)
-            memory[section] = memory.get(section, 0) + 1
-            grouping = []
-    if (x, y) != (0, 0):
-        raise Exception("assumption")
-    return memory
+
+        # subsequence = []
+        # # add these in the preferred order so then the first solution is best solution
+        # if dx < 0:
+        #     subsequence += ["<" * abs(dx)]
+        # if dy > 0:
+        #     subsequence += ["v" * abs(dy)]
+        # if dy < 0:
+        #     subsequence += ["^" * abs(dy)]
+        # if dx > 0:
+        #     subsequence += [">" * abs(dx)]
+
+        # if len(subsequence) == 0:
+        #     sections.append("A")
+        # else:
+        #     bc = 0
+        #     for perm in itertools.permutations(subsequence):
+        #         test_x, test_y = old_x, old_y
+        #         is_bad = False
+        #         for c in perm:
+        #             if c[0] == "<":
+        #                 test_x -= len(c)
+        #             elif c[0] == "^":
+        #                 test_y -= len(c)
+        #             elif c[0] == ">":
+        #                 test_x += len(c)
+        #             elif c[0] == "v":
+        #                 test_y += len(c)
+        #             if (test_x, test_y) == illegal:
+        #                 is_bad = True
+        #                 bc += 1
+        #                 break
+        #         if not is_bad:
+        #             if bc > 0:
+        #                 print(*perm)
+        #             sections.append("".join([*perm, "A"]))
+        #             break
+    return "".join(sections)
 
 
 def length(code: str) -> int:
-    codes = transform(code, numeric_coord, illegal=(-2, 0))
+    code = transform(code, numeric_coord, illegal=(-2, 0))
 
-    for _ in range(25):
-        update: dict[str, int] = {}
-        for code, count in codes.items():
-            partials = transform(code, directional_coord, illegal=(-2, 0))
-            for update_code, partial_count in partials.items():
-                update[update_code] = update.get(update_code, 0) + partial_count * count
-        codes = update
-    out = 0
-    for code, count in codes.items():
-        out += count * len(code)
-    return out
+    for _ in range(10):
+        code = transform(code, directional_coord, illegal=(-2, 0))
+    return len(code)
 
 
 def solve(data: Data) -> int:
