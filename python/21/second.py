@@ -46,47 +46,71 @@ def transform(
         x, y = coord(c)
         dx, dy = x - old_x, y - old_y
 
+        left_first = (x, old_y) != illegal
+        right_first = (old_x, y) == illegal
         subsequence = []
-
-        # add these in the preferred order so then the first solution is best solution
-        if dx < 0:
+        if dx < 0 and left_first:
             subsequence += ["<" * abs(dx)]
+        if dx > 0 and right_first:
+            subsequence += [">" * abs(dx)]
+
         if dy > 0:
             subsequence += ["v" * abs(dy)]
         if dy < 0:
             subsequence += ["^" * abs(dy)]
-        if dx > 0:
-            subsequence += [">" * abs(dx)]
 
-        if len(subsequence) == 0:
-            sections.append("A")
-        else:
-            for perm in itertools.permutations(subsequence):
-                test_x, test_y = old_x, old_y
-                is_bad = False
-                for c in perm:
-                    if c[0] == "<":
-                        test_x -= len(c)
-                    elif c[0] == "^":
-                        test_y -= len(c)
-                    elif c[0] == ">":
-                        test_x += len(c)
-                    elif c[0] == "v":
-                        test_y += len(c)
-                    if (test_x, test_y) == illegal:
-                        is_bad = True
-                        break
-                if not is_bad:
-                    sections.append("".join([*perm, "A"]))
-                    break
+        if dx < 0 and not left_first:
+            subsequence += ["<" * abs(dx)]
+        if dx > 0 and not right_first:
+            subsequence += [">" * abs(dx)]
+        subsequence.append("A")
+        sections.append("".join(subsequence))
+
         old_x, old_y = x, y
+
+        # subsequence = []
+        # # add these in the preferred order so then the first solution is best solution
+        # if dx < 0:
+        #     subsequence += ["<" * abs(dx)]
+        # if dy > 0:
+        #     subsequence += ["v" * abs(dy)]
+        # if dy < 0:
+        #     subsequence += ["^" * abs(dy)]
+        # if dx > 0:
+        #     subsequence += [">" * abs(dx)]
+
+        # if len(subsequence) == 0:
+        #     sections.append("A")
+        # else:
+        #     bc = 0
+        #     for perm in itertools.permutations(subsequence):
+        #         test_x, test_y = old_x, old_y
+        #         is_bad = False
+        #         for c in perm:
+        #             if c[0] == "<":
+        #                 test_x -= len(c)
+        #             elif c[0] == "^":
+        #                 test_y -= len(c)
+        #             elif c[0] == ">":
+        #                 test_x += len(c)
+        #             elif c[0] == "v":
+        #                 test_y += len(c)
+        #             if (test_x, test_y) == illegal:
+        #                 is_bad = True
+        #                 bc += 1
+        #                 break
+        #         if not is_bad:
+        #             if bc > 0:
+        #                 print(*perm)
+        #             sections.append("".join([*perm, "A"]))
+        #             break
     return "".join(sections)
 
 
 def length(code: str) -> int:
     code = transform(code, numeric_coord, illegal=(-2, 0))
 
-    for _ in range(25):
+    for _ in range(10):
         code = transform(code, directional_coord, illegal=(-2, 0))
     return len(code)
 
