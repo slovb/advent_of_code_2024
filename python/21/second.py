@@ -52,6 +52,7 @@ def transform(
         left_first = (x, old_y) != illegal
         right_first = (old_x, y) == illegal
         subsequence = []
+
         if dx < 0 and left_first:
             subsequence += ["<" * abs(dx)]
         if dx > 0 and right_first:
@@ -66,13 +67,13 @@ def transform(
             subsequence += ["<" * abs(dx)]
         if dx > 0 and not right_first:
             subsequence += [">" * abs(dx)]
+
         subsequence.append("A")
-        # sections.append("".join(subsequence))
 
         old_x, old_y = x, y
         grouping += subsequence
         if (x, y) == (0, 0):
-            # returning to home means we can jumble these
+            # returning to home means we can jumble these for massive memoization
             section = "".join(grouping)
             memory[section] = memory.get(section, 0) + 1
             grouping = []
@@ -81,10 +82,11 @@ def transform(
     return memory
 
 
-def length(code: str) -> int:
+def length(code: str, loops: int) -> int:
     codes = transform(code, numeric_coord, illegal=(-2, 0))
 
-    for _ in range(25):
+    for _ in range(loops):
+        # memoize subresutls to silly degrees
         update: dict[str, int] = {}
         for code, count in codes.items():
             partials = transform(code, directional_coord, illegal=(-2, 0))
@@ -97,11 +99,11 @@ def length(code: str) -> int:
     return out
 
 
-def solve(data: Data) -> int:
+def solve(data: Data, loops: int) -> int:
     out = 0
     for code in data.codes:
         nv = numval(code)
-        l = length(code)
+        l = length(code, loops)
         print(code, nv, l)
         out += nv * l
     return out
@@ -117,21 +119,21 @@ def read(filename) -> Data:
         return data
 
 
-def main(filename):
-    return solve(read(filename))
+def main(filename, loops=25):
+    return solve(read(filename), loops)
 
 
 if __name__ == "__main__":
     import sys
 
     testcases = [
-        # ("test_0.txt", 126384),
+        ("test_0.txt", 126384, 2),
     ]
 
     if len(sys.argv) < 2:
         has_failed = False
-        for filename, value in testcases:
-            res = main(filename)
+        for filename, value, loops in testcases:
+            res = main(filename, loops)
             print("{}   {}\n".format(filename, str(res)))
             if res != value:
                 print("Failed test")
