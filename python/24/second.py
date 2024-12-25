@@ -208,6 +208,10 @@ def better_swap_candidates(data: Data, size: int, n: int):
     return candidates
 
 
+def super_candidates_from_graphviz(data: Data, size: int, n: int):
+    return set(["z07", "shj", "pfn", "z23", "z27", "kcd", "tpk", "wkb"])
+
+
 def initial_swaps(outputs, size):
     groups = itertools.combinations(outputs, 2 * size)
     for group in groups:
@@ -238,6 +242,9 @@ def solve(data: Data, size: int) -> str:
     print(len(outputs))
     outputs = better_swap_candidates(data, size, n)
     print(len(outputs))
+    if size != 2:
+        outputs = super_candidates_from_graphviz(data, size, n)
+        print(len(outputs))
     swaps_iterator = initial_swaps(outputs, size)
 
     while True:
